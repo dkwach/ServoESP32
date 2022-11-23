@@ -118,6 +118,16 @@ public:
     bool detach();
 
     /**
+     * @brief Stop driving the servo pulse train.
+     *
+     * If not currently attached to a motor, this function has no effect.
+     * It will wait to the end of active PWM state to detach used gpio.
+     *
+     * @return true if this call did anything, false otherwise.
+     */
+    bool safeDetach();
+
+    /**
      * @brief Set the servomotor target angle.
      *
      * @param angle Target angle, in degrees.  If the target angle is
@@ -173,6 +183,7 @@ public:
 
 
 private:
+    void _detach(void);
     void _resetFields(void);
 
     int _usToDuty(int us)    { return map(us, 0, TAU_USEC, 0, MAX_COMPARE); }
