@@ -73,12 +73,27 @@ bool Servo::detach() {
         return false;
     }
 
+    _detach();
+    return true;
+}
+
+bool Servo::safeDetach() {
+    if (!this->attached()) {
+        return false;
+    }
+
+    attachInterruptArg(digitalPinToInterrupt(_pin), (void (*)(void*))(&Servo::_detach), this, FALLING);
+    while (this->attached());
+    detachInterrupt(digitalPinToInterrupt(_pin));
+    return true;
+}
+
+void Servo::_detach() {
     if(_channel == (channel_next_free - 1))
         channel_next_free--;
 
     ledcDetachPin(_pin);
     _pin = PIN_NOT_ATTACHED;
-    return true;
 }
 
 void Servo::write(int degrees) {

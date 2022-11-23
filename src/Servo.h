@@ -106,7 +106,8 @@ public:
      */
     bool attach(int pin, int channel = CHANNEL_NOT_ATTACHED, 
                 int minAngle = MIN_ANGLE, int maxAngle = MAX_ANGLE, 
-                int minPulseWidth = MIN_PULSE_WIDTH, int maxPulseWidth = MAX_PULSE_WIDTH);
+                int minPulseWidth = MIN_PULSE_WIDTH, int maxPulseWidth = MAX_PULSE_WIDTH, 
+                bool invertOutput=false);
 
     /**
      * @brief Stop driving the servo pulse train.
@@ -116,6 +117,16 @@ public:
      * @return true if this call did anything, false otherwise.
      */
     bool detach();
+
+    /**
+     * @brief Stop driving the servo pulse train.
+     *
+     * If not currently attached to a motor, this function has no effect.
+     * It will wait to the end of active PWM state to detach used gpio.
+     *
+     * @return true if this call did anything, false otherwise.
+     */
+    bool safeDetach();
 
     /**
      * @brief Set the servomotor target angle.
@@ -173,6 +184,7 @@ public:
 
 
 private:
+    void _detach(void);
     void _resetFields(void);
 
     int _usToDuty(int us)    { return map(us, 0, TAU_USEC, 0, MAX_COMPARE); }
